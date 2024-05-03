@@ -24,7 +24,7 @@ def read():
 
     if form.validate():
         url = form.url.data
-        number_plates, region_names = read_number_plates(url)
+        number_plates, region_names, images_bboxs = read_number_plates(url)
 
         return jsonify({
             'success': True,
