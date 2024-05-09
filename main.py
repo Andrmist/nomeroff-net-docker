@@ -23,12 +23,14 @@ def read():
     form = ReadForm(request.args)
 
     if form.validate():
-        url = form.url.data
-        number_plates, region_names, images_bboxs = read_number_plates(url)
+        urls = form.url.data
+        number_plates, region_names = read_number_plates(urls.split(","))
+
+        # print(number_plates, region_names, images_bboxs)
 
         return jsonify({
             'success': True,
-            'url': url,
+            'url': urls.split(","),
             'number_plates': number_plates,
             'region_names': region_names,
         })
@@ -36,7 +38,6 @@ def read():
     return jsonify({
         'success': False,
         'errors': form.errors
-
     })
 
 
