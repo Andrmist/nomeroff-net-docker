@@ -45,10 +45,15 @@ def read_number_plates(urls):
     for url in urls:
         # with tempfile.NamedTemporaryFile() as fp:
         fp = tempfile.NamedTemporaryFile()
-        with urlopen(url) as response:
-            fp.write(response.read())
-        files.append(fp)
-    logger.info(files)
+        try:
+            with urlopen(url) as response:
+                fp.write(response.read())
+            files.append(fp)
+        except Exception as e:
+            logger.error(e)
+    # logger.info(files)
+    if len(files) == 0:
+        return [], []
     results = number_plate_detection_and_reading([fp.name for fp in files])
     for file in files:
         file.close()
@@ -60,28 +65,42 @@ def read_number_plates(urls):
 
     numberplates = {}
     
+    # logger.info(texts)
+    # logger.info(images_bboxs)
     for idx, images_bbox in enumerate(images_bboxs):
+        # logger.info('========')
         areas = [abs(x2 - x1) * abs(y2 - y1) for x1, y1, x2, y2, confidence, class_id in images_bbox]
-        max_numberplate_area_id = areas.index(max(areas))
-        max_numberplate = texts[idx][max_numberplate_area_id]
-        if max_numberplate in numberplates:
-            numberplates[max_numberplate] += 1
-        else:
-            numberplates[max_numberplate] = 1
+        # logger.info(texts[idx])
+        # logger.info(areas)
+        if len(areas) > 0:
+            # logger.info("-----")
+            max_numberplate_area_id = areas.index(max(areas))
+            try:
+                max_numberplate = texts[idx][max_numberplate_area_id]
+                if max_numberplate in numberplates:
+                    numberplates[max_numberplate] += 1
+                else:
+                    numberplates[max_numberplate] = 1
+            except IndexError:
+                continue
 
-        logger.info(texts[idx])
-        logger.info(areas)
     logger.info(numberplates)
 
-    max_numberplate = max(numberplates, key=numberplates.get)
+    if len(numberplates.keys()) > 0:
+        max_numberplate = max(numberplates, key=numberplates.get)
+    else:
+        max_numberplate = None
 
     logger.info(max_numberplate)
 
     final_result = []
 
-    for text, count in numberplates.items():
-        if count == numberplates[max_numberplate]:
-            final_result.append(text)
+    if max_numberplate is None:
+        final_result = []
+    else:
+        for text, count in numberplates.items():
+            if count == numberplates[max_numberplate]:
+                final_result.append(text)
 
     logger.info(final_result)
 
