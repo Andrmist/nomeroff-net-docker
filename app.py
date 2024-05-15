@@ -64,8 +64,14 @@ def read_number_plates(urls):
        confidences, texts) = unzip(results)
 
     numberplates = {}
-    
-    # logger.info(texts)
+
+    numberplates_presence = []
+
+    for url_id in range(len(urls)):
+        if len(texts[url_id]) > 0:
+            numberplates_presence.append(urls[url_id])
+
+    logger.info(texts)
     # logger.info(images_bboxs)
     for idx, images_bbox in enumerate(images_bboxs):
         # logger.info('========')
@@ -104,4 +110,4 @@ def read_number_plates(urls):
 
     logger.info(final_result)
 
-    return final_result, list(itertools.chain(*region_names))
+    return final_result, list(itertools.chain(*region_names)), numberplates_presence

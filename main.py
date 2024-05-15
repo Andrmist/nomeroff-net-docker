@@ -24,13 +24,13 @@ def read():
 
     if form.validate():
         urls = form.url.data
-        number_plates, region_names = read_number_plates(urls.split(","))
+        number_plates, region_names, urls_result = read_number_plates(urls.split(","))
 
         # print(number_plates, region_names, images_bboxs)
 
         return jsonify({
             'success': True,
-            'url': urls.split(","),
+            'url': urls_result,
             'number_plates': number_plates,
             'region_names': region_names,
         })
