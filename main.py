@@ -26,7 +26,7 @@ class ReadForm(Form):
 
 
 @app.route("/read")
-@cache.cached(timeout=86400)
+@cache.cached(timeout=86400, query_string=True)
 def read():
     form = ReadForm(request.args)
 

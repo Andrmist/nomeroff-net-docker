@@ -8,9 +8,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt update && apt install -y git libsm6 libxrender1 libgl1 libfontconfig1 libxtst6 build-essential libglib2.0-0
 
-COPY requirements.txt /tmp/requirements.txt
-
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+RUN pip install --no-cache-dir flask waitress torch wtforms Flask-Caching
 
 ARG NOMEROFF_NET_REV
 
