@@ -2,17 +2,18 @@ version: '2.3'
 
 services:
 
-  web:
+  ai-web:
     image: nginx
     restart: unless-stopped
     volumes:
-      - ./docker/web/app.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./ai_service/docker/web/app.conf:/etc/nginx/conf.d/default.conf:ro
     ports:
       - $LISTEN:80
 
-  app:
+  ai-app:
     build:
-      context: docker/app
+      context: ai_service
+      dockerfile: ./docker/app/Dockerfile
       args:
         NOMEROFF_NET_REV: master # e96221d1b9e93641d434185def9b301411db7b6f 
     command: waitress-serve --call 'main:create_app'
@@ -22,8 +23,8 @@ services:
     runtime: nvidia
     scale: 2
     volumes:
-      - ./:/var/www/app
-      - ./models:/var/www/nomeroff-net/data/models
+      - ./ai_service:/var/www/app
+      - ./ai_service/models:/var/www/nomeroff-net/data/models
     environment:
       - TF_FORCE_GPU_ALLOW_GROWTH=true
     logging:

@@ -2,5 +2,9 @@
 .pyc
 docker-compose.override.yml
 nomeroff-net/
+nomeroff_net/
 .env
 __pycache__/
+flake.lock
+flake.nix
+.ipynb_checkpoints/

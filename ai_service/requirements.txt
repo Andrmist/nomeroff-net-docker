@@ -1,0 +1,4 @@
+flask
+waitress
+wtforms
+Flask-Caching
