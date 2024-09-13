@@ -127,7 +127,7 @@ func (h *HTTPHandler) GetToken(ctx context.Context) func(c *gin.Context) {
 //	@Description	Get numberplates array from photo file
 //	@Tags			est
 //	@Accept			mpfd
-//	@Param			file	formData	file	true	"Numberplate photo to check"
+//	@Param			file	formData	file	true	"Numberplate photo to check. Max photo size: 100M"
 //
 //	@Param			Authorization	header	string				true	"OAuth 2.0 Authorization token"	default(Bearer <Add auth token here>)
 //

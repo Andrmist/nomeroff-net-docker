@@ -101,7 +101,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "file",
-                        "description": "Numberplate photo to check",
+                        "description": "Numberplate photo to check. Max photo size: 100M",
                         "name": "file",
                         "in": "formData",
                         "required": true

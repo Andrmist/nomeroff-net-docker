@@ -84,7 +84,7 @@ paths:
       - multipart/form-data
       description: Get numberplates array from photo file
       parameters:
-      - description: Numberplate photo to check
+      - description: 'Numberplate photo to check. Max photo size: 100M'
         in: formData
         name: file
         required: true
