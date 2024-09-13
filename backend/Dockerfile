@@ -6,7 +6,7 @@ ADD go.mod .
 
 COPY . .
 
-RUN go mod download && go build -o autoria_rmq .
+RUN go mod download && go build -o west_auto_hub_numberplate .
 
 FROM alpine
 

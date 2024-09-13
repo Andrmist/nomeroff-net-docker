@@ -35,10 +35,10 @@ services:
   backend:
     build: backend
     ports:
-      - 8080:8080
+      - 3002:8080
     volumes:
       - ./config.json:/app/config.json
     restart: unless-stopped
     depends_on:
-      - ai_app
-      - ai_web
+      - ai-app
+      - ai-web
