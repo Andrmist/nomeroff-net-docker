@@ -251,7 +251,122 @@ func (h *HTTPHandler) ProcessPhoto(ctx context.Context) func(c *gin.Context) {
 			}
 		})
 
-		var numberplatesResp []string
+		numberplatesResp := make([]string, 0)
+		for _, numberplate := range numberplates {
+			numberplatesResp = append(numberplatesResp, numberplate.Numberplate)
+		}
+
+		c.JSON(http.StatusOK, ProcessPhotoResponce{
+			Numbeplates: numberplatesResp,
+		})
+	}
+}
+
+func (h *HTTPHandler) ProcessPhotoByURL(ctx context.Context) func(c *gin.Context) {
+	return func(c *gin.Context) {
+		log := h.log.WithFields(logrus.Fields{
+			"module": "handler_http",
+			"method": "POST",
+			"route":  c.FullPath(),
+		})
+		log.Level = h.log.Level
+		var path struct {
+			URL string `json:"url"`
+		}
+		c.Bind(&path)
+
+		aiURL, err := url.Parse(h.aiAPI)
+		if err != nil {
+			log.Error(err)
+			err = utils.NewHttpError("failed to process numberplate", "cannot parse service url", http.StatusInternalServerError)
+			c.Error(err)
+			return
+		}
+
+		aiURL.Path = "/read"
+		query := aiURL.Query()
+		query.Add("url", path.URL)
+		aiURL.RawQuery = query.Encode()
+		log.Debug(aiURL.String())
+
+		req, err := http.NewRequest(http.MethodGet, aiURL.String(), nil)
+		if err != nil {
+			log.Error(err)
+			err = utils.NewHttpError("failed to process numberplate", "cannot init request", http.StatusInternalServerError)
+			c.Error(err)
+			return
+		}
+
+		res, err := h.httpClient.Do(req)
+		if err != nil {
+			log.Error(err)
+			err = utils.NewHttpError("failed to process numberplate", "numberplate recognition request failed", http.StatusInternalServerError)
+			c.Error(err)
+			return
+		}
+
+		var resBody NomeroffNetResponce
+		if err := json.NewDecoder(res.Body).Decode(&resBody); err != nil {
+			log.Error(err)
+			err = utils.NewHttpError("failed to process numberplate", "numberplate recognition request failed", http.StatusInternalServerError)
+			c.Error(err)
+			return
+		}
+		log.Debug(resBody)
+
+		if !resBody.Validated {
+			log.Error(resBody.Errors)
+			err = utils.NewHttpError("failed to process numberplate", "numberplate recognition failed to validate data", http.StatusUnprocessableEntity)
+			c.Error(err)
+			return
+		}
+		if !resBody.Success {
+			log.Error(resBody.Errors)
+			err = utils.NewHttpError("failed to process numberplate", "numberplate recognition failed", http.StatusInternalServerError)
+			c.Error(err)
+			return
+		}
+		if len(resBody.Data) == 0 {
+			log.Error(resBody.Errors)
+			err = utils.NewHttpError("failed to process numberplate", "got empty responce from numberplate recognition", http.StatusInternalServerError)
+			c.Error(err)
+			return
+		}
+
+		resp := resBody.Data[0]
+		type numberplateData struct {
+			Numberplate string
+			X1          float64
+			Y1          float64
+			X2          float64
+			Y2          float64
+		}
+		var numberplates []numberplateData
+		for i, bbox := range resp.ImagesBboxs {
+			if len(resp.Texts) > i {
+				numberplates = append(numberplates, numberplateData{
+					Numberplate: resp.Texts[i],
+					X1:          bbox[0],
+					Y1:          bbox[1],
+					X2:          bbox[2],
+					Y2:          bbox[3],
+				})
+			}
+		}
+
+		slices.SortStableFunc(numberplates, func(a, b numberplateData) int {
+			aRect := math.Abs(a.X2-a.X1) * math.Abs(a.Y2-a.Y1)
+			bRect := math.Abs(b.X2-b.X1) * math.Abs(b.Y2-b.Y1)
+			if aRect > bRect {
+				return 1
+			} else if aRect < bRect {
+				return -1
+			} else {
+				return 0
+			}
+		})
+
+		numberplatesResp := make([]string, 0)
 		for _, numberplate := range numberplates {
 			numberplatesResp = append(numberplatesResp, numberplate.Numberplate)
 		}
