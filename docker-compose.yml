@@ -1,7 +1,6 @@
 version: '2.3'
 
 services:
-
   ai-web:
     image: nginx
     restart: unless-stopped
@@ -32,3 +31,14 @@ services:
        options:
          max-size: "10m"
          max-file: "5"
+
+  backend:
+    build: backend
+    ports:
+      - 8080:8080
+    volumes:
+      - ./config.json:/app/config.json
+    restart: unless-stopped
+    depends_on:
+      - ai_app
+      - ai_web

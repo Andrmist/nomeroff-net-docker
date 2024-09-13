@@ -1,0 +1,18 @@
+{
+  "log": {
+    "level": "DEBUG",
+    "dir": "logs"
+  },
+  "db": {
+    "driver": "postgres",
+    "url": "postgresql://postgres:postgres@localhost:5432/db?sslmode=disable"
+  },
+  "amqp_url": "amqp://guest:guest@localhost:5672",
+  "api_key": {
+    "autoria": "autoria_key",
+    "automoto": "automoto_key"
+  },
+  "host": "public-api.localhost.domain",
+  "base_url": "/autoria",
+  "port": 8080
+}

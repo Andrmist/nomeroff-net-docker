@@ -1,0 +1,124 @@
+basePath: /api
+definitions:
+  handlers.GetTokenResponce:
+    properties:
+      authorization_token:
+        type: string
+      ttl:
+        type: integer
+    type: object
+  handlers.ProcessPhotoResponce:
+    properties:
+      numberplates:
+        items:
+          type: string
+        type: array
+    type: object
+  utils.Http:
+    properties:
+      description:
+        type: string
+      metadata:
+        type: string
+      statusCode:
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: info@automoto.ua
+    name: Automoto
+    url: https://automoto.ua
+  description: Numberplates recognition REST API
+  title: AutomotoAPI | WestAutoHub
+  version: "1.0"
+paths:
+  /oauth/token:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 'Get [OAuth 2.0](https://www.rfc-editor.org/rfc/rfc6749.html) Authorization
+        Token. There are two options for passing OAuth 2.0 credentials: Authorization
+        header or x-www-form-urlencoded data'
+      parameters:
+      - in: formData
+        name: client_id
+        type: string
+      - in: formData
+        name: client_secret
+        type: string
+      - default: client_credentials
+        in: formData
+        name: grant_type
+        required: true
+        type: string
+      - description: client_id:client_secret in base64
+        in: header
+        name: Authorization
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns auth token and TTL
+          schema:
+            $ref: '#/definitions/handlers.GetTokenResponce'
+        "400":
+          description: Request data is invalid
+          schema:
+            $ref: '#/definitions/utils.Http'
+        "422":
+          description: Server cannot process request data
+          schema:
+            $ref: '#/definitions/utils.Http'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Http'
+      summary: Get OAuth 2.0 Authorization Token
+      tags:
+      - est
+  /v1/numberplate:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Get numberplates array from photo file
+      parameters:
+      - description: Numberplate photo to check
+        in: formData
+        name: file
+        required: true
+        type: file
+      - default: Bearer <Add auth token here>
+        description: OAuth 2.0 Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns numberplates array
+          schema:
+            $ref: '#/definitions/handlers.ProcessPhotoResponce'
+        "400":
+          description: Request data is invalid
+          schema:
+            $ref: '#/definitions/utils.Http'
+        "401":
+          description: Authorize token is invalid or expired
+          schema:
+            $ref: '#/definitions/utils.Http'
+        "422":
+          description: Server cannot process request data
+          schema:
+            $ref: '#/definitions/utils.Http'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Http'
+      summary: Find numberplates on photo
+      tags:
+      - est
+swagger: "2.0"
