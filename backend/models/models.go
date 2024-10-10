@@ -1,4 +1,4 @@
-package handlers
+package models
 
 import (
 	"github.com/golang-jwt/jwt"
@@ -26,7 +26,11 @@ type OAuthJWTClaim struct {
 }
 
 type ProcessPhotoResponce struct {
-	Numbeplates []string `json:"numberplates"`
+	Numberplates []string `json:"numberplates"`
+}
+
+type ProcessPhotoResponceSingle struct {
+	Numberplate string `json:"numberplate"`
 }
 
 type NomeroffNetResponce struct {

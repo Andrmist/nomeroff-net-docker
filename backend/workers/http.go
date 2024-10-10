@@ -47,6 +47,7 @@ func HTTPWorker(ctx context.Context, log *logrus.Logger, mcHandler *handlers.Min
 	api := r.Group(baseURL)
 	api.POST("/oauth/token", h.GetToken(ctx))
 	api.POST("/numberplate/by_url", h.ProcessPhotoByURL(ctx))
+	api.POST("/numberplate/by_urls", h.ProcessPhotoByURLs(ctx))
 	api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	v1 := api.Group("/v1")
