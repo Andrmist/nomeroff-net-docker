@@ -66,14 +66,16 @@ func GetNumberplateByURLs(apiURL string, urls []string) ([][]numberplateData, er
 	var numberplates [][]numberplateData
 	for _, resp := range resBody.Data {
 		var numberplatesForPhoto []numberplateData
-		for i, bbox := range resp.ImagesBboxs {
-			numberplatesForPhoto = append(numberplatesForPhoto, numberplateData{
-				Numberplate: resp.Texts[i],
-				X1:          bbox[0],
-				Y1:          bbox[1],
-				X2:          bbox[2],
-				Y2:          bbox[3],
-			})
+		if len(resp.Texts) > 0 {
+			for i, bbox := range resp.ImagesBboxs {
+				numberplatesForPhoto = append(numberplatesForPhoto, numberplateData{
+					Numberplate: resp.Texts[i],
+					X1:          bbox[0],
+					Y1:          bbox[1],
+					X2:          bbox[2],
+					Y2:          bbox[3],
+				})
+			}
 		}
 		numberplates = append(numberplates, numberplatesForPhoto)
 	}
