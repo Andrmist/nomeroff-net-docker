@@ -36,7 +36,7 @@ def read_number_plates(urls):
             logger.error(e)
     # logger.info(files)
     if len(files) == 0:
-        return [], []
+        return [], [], []
     results = number_plate_detection_and_reading([fp.name for fp in files])
     for file in files:
         file.close()

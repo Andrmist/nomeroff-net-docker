@@ -9,6 +9,9 @@ services:
       - ./docker/web/app.conf:/etc/nginx/conf.d/default.conf:ro
     ports:
       - $LISTEN:80
+    depends_on:
+      app:
+        condition: service_healthy
 
   app:
     build:
@@ -20,7 +23,19 @@ services:
     restart: unless-stopped
     # uncomment `runtime` to use GPU
     runtime: nvidia
-    scale: 2
+    healthcheck:
+      test: "curl http://localhost:8080/alive"
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    deploy:
+      mode: replicated
+      replicas: 4
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
     volumes:
       - ./:/var/www/app
       - ./models:/var/www/nomeroff-net/data/models

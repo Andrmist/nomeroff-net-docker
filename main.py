@@ -6,14 +6,14 @@ from wtforms import Form, validators, StringField
 from app import read_number_plates
 
 app = Flask(__name__)
-app.config.from_mapping(
-    {
-        "DEBUG": True,  # some Flask specific configs
-        "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
-        "CACHE_DEFAULT_TIMEOUT": 300,
-    }
-)
-cache = Cache(app)
+#app.config.from_mapping(
+#    {
+#        "DEBUG": True,  # some Flask specific configs
+#        "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
+#        "CACHE_DEFAULT_TIMEOUT": 300,
+#    }
+#)
+#cache = Cache(app)
 
 
 @app.route("/status")
@@ -26,7 +26,7 @@ class ReadForm(Form):
 
 
 @app.route("/read")
-@cache.cached(timeout=86400)
+#@cache.cached(timeout=86400, query_string=True)
 def read():
     form = ReadForm(request.args)
 
