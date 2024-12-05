@@ -1,0 +1,5 @@
+flask
+waitress
+wtforms
+Flask-Caching
+git+https://github.com/ria-com/modelhub-client.git
