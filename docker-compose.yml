@@ -46,3 +46,24 @@ services:
        options:
          max-size: "10m"
          max-file: "5"
+
+  # test:
+  #   build:
+  #     context: docker/app
+  #     args:
+  #       NOMEROFF_NET_REV: master # e96221d1b9e93641d434185def9b301411db7b6f 
+  #   command: sleep 1000000000000000000
+  #   working_dir: /var/www/app
+  #   restart: unless-stopped
+  #   # uncomment `runtime` to use GPU
+  #   runtime: nvidia
+  #   volumes:
+  #     - ./:/var/www/app
+  #     - ./models:/var/www/nomeroff-net/data/models
+  #   environment:
+  #     - TF_FORCE_GPU_ALLOW_GROWTH=true
+  #   logging:
+  #      driver: "json-file"
+  #      options:
+  #        max-size: "10m"
+  #        max-file: "5"

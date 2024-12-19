@@ -66,8 +66,8 @@ def read_number_plates(urls):
     for idx, images_bbox in enumerate(images_bboxs):
         # logger.info('========')
         areas = [
-            abs(x2 - x1) * abs(y2 - y1)
-            for x1, y1, x2, y2, confidence, class_id, c in images_bbox
+            abs(img[2] - img[0]) * abs(img[3] - img[1])
+            for img in images_bbox
         ]
         # logger.info(texts[idx])
         # logger.info(areas)
